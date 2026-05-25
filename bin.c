@@ -24,4 +24,5 @@ int main() {
         printf("%d", binlin[j]);
         //for(a; b; c;) a == 한번만 실행됨 b == 비교식 c == 증감식
     }
+    return 0;
 }
