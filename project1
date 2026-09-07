@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+int main() {
+    int path_len[10];
+    char turn;
+    int i = 0;
+    while(i < 10) {
+        scanf(" %c", &turn);
+        if(turn == 's') {
+            path_len[i] = i;
+            i++;
+            printf("%d\n", i);
+        }
+    }
+
+    return 0;
+}
