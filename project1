@@ -1,33 +1,46 @@
 #include <stdio.h>
 
-int main() {
-    struct tower {
-        int turret;
-        int obsutruc;
-    };
+struct tower {
+    int turret;
+    int obsutruc;
+};
+struct enemy {
     int common_enemy;
+    int enemy_speed;
+};
 
-    int enemy_speed = 1;
-    int path_len[10] = {0};
-    int *enemy_loc = path_len;
+int path_len[10] = {0};
+
+int main() {
+    struct enemy ene_bug;
+    int *enemy_loc[3] = {NULL};
+    int epl = 0;
     int turn = 0;
     char skip;
-    while(enemy_loc < path_len + 10) {
+
+    while(turn < 20 || path_len[9] == 0) {
         scanf(" %c", &skip);
 
         if(skip == 's') {
-            *enemy_loc = 1;
-            
-            for(int j = 0; j < 10; j++) {
-                printf("%d ", path_len[j]);
+            if((turn & 1) == 1 && epl < 3) {
+                enemy_loc[epl] = path_len;
+                *enemy_loc[epl] = 1;
+                epl++;
             }
+        for(int i = 0; i < epl; i++) {
+            if(enemy_loc[i] != NULL)
+            *enemy_loc[i] = 0;
+            enemy_loc[i]++;
+            *enemy_loc[i] = 1;
+            }    
+        for(int j = 0; j < 10; j++) {
+            printf("%d ", path_len[j]);
+            }
+
+        turn++;
         }
 
-        enemy_loc = enemy_loc + enemy_speed;
-
-        for(int i = 0; i < 10; i++) {
-            path_len[i] = 0;
-        }
+        printf("\ncurrent_turn : %d", turn);
     }
 
     return 0;
