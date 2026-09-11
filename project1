@@ -28,10 +28,11 @@ int main() {
                 epl++;
             }
         for(int i = 0; i < epl; i++) {
-            if(enemy_loc[i] != NULL)
+            if(enemy_loc[i] != NULL) {
             *enemy_loc[i] = 0;
             enemy_loc[i]++;
             *enemy_loc[i] = 1;
+                }
             }    
         for(int j = 0; j < 10; j++) {
             printf("%d ", path_len[j]);
