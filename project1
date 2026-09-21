@@ -1,47 +1,62 @@
 #include <stdio.h>
 
-struct tower {
-    int turret;
-    int obsutruc;
-};
+int map_len[30] = {0};
+
 struct enemy {
-    int common_enemy;
-    int enemy_speed;
+    int common;
+    int rare;
 };
 
-int path_len[10] = {0};
+struct speed {
+    int common_speed;
+    int rare_speed;
+};
+
+int *enemy_var[5] = {NULL};
 
 int main() {
-    struct enemy ene_bug;
-    int *enemy_loc[3] = {NULL};
-    int epl = 0;
+    struct enemy b1;
+    b1.common = 1;
+    b1.rare = 2;
     int turn = 0;
-    char skip;
 
-    while(turn < 20 || path_len[9] == 0) {
-        scanf(" %c", &skip);
+    struct speed bs;
+    bs.common_speed = 1;
+    bs.rare_speed = 2;
 
-        if(skip == 's') {
-            if((turn & 1) == 1 && epl < 3) {
-                enemy_loc[epl] = path_len;
-                *enemy_loc[epl] = 1;
-                epl++;
-            }
-        for(int i = 0; i < epl; i++) {
-            if(enemy_loc[i] != NULL) {
-            *enemy_loc[i] = 0;
-            enemy_loc[i]++;
-            *enemy_loc[i] = 1;
-                }
-            }    
-        for(int j = 0; j < 10; j++) {
-            printf("%d ", path_len[j]);
-            }
-
-        turn++;
+    while(map_len[29] == 0) {
+        if(turn == 0) {
+            enemy_var[0] = map_len;
+            *enemy_var[0] = b1.rare;
+            map_len[0] = *enemy_var[0];
         }
 
-        printf("\ncurrent_turn : %d", turn);
+        if(turn > 0 && turn < 3) {
+            enemy_var[turn] = map_len;
+            *enemy_var[turn] = b1.common;
+            map_len[0] = *enemy_var[turn];
+            }
+        
+        for(int i = 1; i < 3; i++) {
+            if(enemy_var[i] != NULL) {
+                *enemy_var[i] = 0;
+                enemy_var[i] += bs.common_speed;
+                *enemy_var[i] = b1.common;
+            }
+        }
+
+        if(turn > 0) {
+            *enemy_var[0] = 0;
+            enemy_var[0] += bs.rare_speed;
+            *enemy_var[0] = b1.rare;
+        }
+
+        for(int i = 0; i < 30; i++) {
+            printf("%d ", map_len[i]);
+        }
+
+        printf("current turn : %d\n", turn);
+        turn++;
     }
 
     return 0;
