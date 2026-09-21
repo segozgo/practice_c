@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 struct profile {
-// 구조체선언
     int num;
     char name[5];
 };
