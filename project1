@@ -36,23 +36,23 @@ int main() {
             *enemy_var[turn] = b1.common;
             map_len[0] = *enemy_var[turn];
             }
-        
-        for(int i = 1; i < 3; i++) {
-            if(enemy_var[i] != NULL) {
-                *enemy_var[i] = 0;
-                enemy_var[i] += bs.common_speed;
-                *enemy_var[i] = b1.common;
-            }
-        }
-
-        if(turn > 0) {
-            *enemy_var[0] = 0;
-            enemy_var[0] += bs.rare_speed;
-            *enemy_var[0] = b1.rare;
-        }
 
         for(int i = 0; i < 30; i++) {
             printf("%d ", map_len[i]);
+        }
+
+        for(int i = 0; i < 3; i++) {
+            if(enemy_var[i] != NULL) {
+                *enemy_var[i] = 0;
+                if(i == 0) {
+                    enemy_var[i] += bs.rare_speed;
+                    *enemy_var[i] = b1.rare;
+                }
+                if(i > 0) {
+                    enemy_var[i] += bs.common_speed;
+                    *enemy_var[i] = b1.common;
+                }
+            }
         }
 
         printf("current turn : %d\n", turn);
