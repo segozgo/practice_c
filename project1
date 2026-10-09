@@ -12,13 +12,13 @@ struct speed {
     int rare_speed;
 };
 
-int *enemy_var[5] = {NULL};
-
 int main() {
-    struct enemy b1;
-    b1.common = 1;
-    b1.rare = 2;
+    int *enemy_loc[4] = {NULL};
     int turn = 0;
+
+    struct enemy bv;
+    bv.common = 1;
+    bv.rare = 2;
 
     struct speed bs;
     bs.common_speed = 1;
@@ -26,38 +26,50 @@ int main() {
 
     while(map_len[29] == 0) {
         if(turn == 0) {
-            enemy_var[0] = map_len;
-            *enemy_var[0] = b1.rare;
-            map_len[0] = *enemy_var[0];
+            map_len[0] = bv.rare;
+            enemy_loc[turn] = &map_len[0];
         }
 
-        if(turn > 0 && turn < 3) {
-            enemy_var[turn] = map_len;
-            *enemy_var[turn] = b1.common;
-            map_len[0] = *enemy_var[turn];
-            }
+        if(turn > 0 && turn < 4) {
+            map_len[0] = bv.common;
+            enemy_loc[turn] = &map_len[0];
+        }
 
         for(int i = 0; i < 30; i++) {
             printf("%d ", map_len[i]);
         }
 
-        for(int i = 0; i < 3; i++) {
-            if(enemy_var[i] != NULL) {
-                *enemy_var[i] = 0;
-                if(i == 0) {
-                    enemy_var[i] += bs.rare_speed;
-                    *enemy_var[i] = b1.rare;
+        for(int i = 0; i < 4; i++) {
+            if(enemy_loc[i] != NULL) {
+                if(*enemy_loc[i] == 1) {
+                    *enemy_loc[i] = 0;
+                    enemy_loc[i] += bs.common_speed;
+                    *enemy_loc[i] = bv.common;
                 }
-                if(i > 0) {
-                    enemy_var[i] += bs.common_speed;
-                    *enemy_var[i] = b1.common;
+
+                else if(*enemy_loc[i] == 2) {
+                    *enemy_loc[i] = 0;
+                    enemy_loc[i] += bs.rare_speed;
+                    *enemy_loc[i] = bv.rare;
+                }
+
+                if(enemy_loc[i] < map_len + 30) {
+                    *enemy_loc[0] = bv.rare;
+                }
+
+                else {
+                    enemy_loc[0] = NULL;
+                    break;
                 }
             }
-        }
+            
+        } 
 
         printf("current turn : %d\n", turn);
+
         turn++;
     }
-
+    return 0;
+}
     return 0;
 }
