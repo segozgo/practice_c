@@ -5,98 +5,64 @@ int map_len[30] = {0};
 
 struct tower {
     int MG;
-    int LAS;
     int AC;
 };
 
-struct tower_range {
-    int MG_RAN;
-    int LAS_RAN;
-    int AC_RAN;
-};
-
 struct enemy {
-    int common;
-    int rare;
-};
-
-struct speed {
-    int common_speed;
-    int rare_speed;
+    int hp;
+    int speed;
+    int type; 
+    int loc;
 };
 
 int main() {
-    int *enemy_loc[4] = {NULL};
     int turn = 0;
-    int damage;
 
-    struct tower tur;
-    tur.MG = 11;
-    tur.LAS = 12;
-    tur.AC = 13;
-
-    struct tower_range ran;
-    ran.MG_RAN = 4;
-    ran.LAS_RAN = 7;
-    ran.AC_RAN = 5;
-
-    struct enemy bv;
-    bv.common = 1;
-    bv.rare = 2;
-
-    struct speed bs;
-    bs.common_speed = 1;
-    bs.rare_speed = 2;
-
-    map_len[19] = tur.AC;
+    struct enemy *actene[10] = {0};
+    int counter = 0;
 
     while(map_len[29] == 0) {
         if(turn == 0) {
-            map_len[0] = bv.rare;
-            enemy_loc[turn] = &map_len[0];
+            printf("...");
         }
 
         if(turn > 0 && turn < 4) {
-            map_len[0] = bv.common;
-            enemy_loc[turn] = &map_len[0];
+            struct enemy *e = (struct enemy*)malloc(sizeof(struct enemy));
+            e -> hp = 3;
+            e -> speed = 1;
+            e -> type = 1;
+            e -> loc = 0;
+            actene[counter] = e;
+            counter++;
+        }
+        
+        printf("\nmemory_allocated\n");
+
+        for(int i = 0; i < 30; i++) {
+            map_len[i] = 0;
+        }
+
+        for(int i = 0; i < counter; i++) {
+            if(actene[i] != NULL) {
+                actene[i] -> loc += actene[i] -> speed;
+                map_len[actene[i] -> loc] = actene[i] -> type;
+            }
         }
 
         for(int i = 0; i < 30; i++) {
-            printf("%d ", map_len[i]);
+            printf("%d " , map_len[i]);
         }
-
-        for(int i = 0; i < 4; i++) {
-            if(enemy_loc[i] != NULL) {
-                if(*enemy_loc[i] == 1) {
-                    *enemy_loc[i] = 0;
-                    enemy_loc[i] += bs.common_speed;
-                    *enemy_loc[i] = bv.common;
-                }
-
-                else if(*enemy_loc[i] == 2) {
-                    *enemy_loc[i] = 0;
-                    enemy_loc[i] += bs.rare_speed;
-                    *enemy_loc[i] = bv.rare;
-                }
-            }
-        }
-        for(int i = 18; i > 12; i--) {
-            if(map_len[i] == 1 || map_len[i] == 2) {
-                map_len[i] = 0;
-                break;
-            }
-        }
-    
-        for(int i = 0; i < turn; i++) {
-            if(enemy_loc[i] == NULL) {
-                exit(0);
-            }
-        }
-
-        printf("current turn : %d\n", turn);
 
         turn++;
+        if(turn > 50) {
+            exit(1);
+        }
     }
+
+    for(int i = 0; i < counter; i++) {
+        free(actene[i]);
+        actene[i] = NULL;
+        }
 
     return 0;
 }
