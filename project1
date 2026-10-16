@@ -18,34 +18,49 @@ struct enemy {
 int main() {
     int turn = 0;
 
-    struct enemy *actene[10] = {0};
-    int counter = 0;
+    int maxi_ene = 1;
+    int enemy_counter = 0;
+    struct enemy *actene = (struct enemy*)malloc(sizeof(struct enemy));
+
+    if(actene == NULL) {
+        free(actene);
+        printf("failed_allocate_memory");
+        exit(1);
+    }
 
     while(map_len[29] == 0) {
         if(turn == 0) {
             printf("...");
         }
 
-        if(turn > 0 && turn < 4) {
-            struct enemy *e = (struct enemy*)malloc(sizeof(struct enemy));
-            e -> hp = 3;
-            e -> speed = 1;
-            e -> type = 1;
-            e -> loc = 0;
-            actene[counter] = e;
-            counter++;
+        if(turn > 0 && turn < 5) {
+            if(maxi_ene <= enemy_counter) {
+                maxi_ene += 2;
+                struct enemy *tem = realloc(actene, sizeof(struct enemy) * maxi_ene);
+                if(tem == NULL) {
+                    free(tem);
+                    printf("failed_allocate_memory");
+                    exit(1);
+                }
+                actene = tem;
+            }
+            actene[enemy_counter].hp = 3;
+            actene[enemy_counter].speed = 1;
+            actene[enemy_counter].type = 1;
+            actene[enemy_counter].loc = 0;
+            enemy_counter++;
         }
-        
+    
         printf("\nmemory_allocated\n");
 
         for(int i = 0; i < 30; i++) {
             map_len[i] = 0;
         }
 
-        for(int i = 0; i < counter; i++) {
-            if(actene[i] != NULL) {
-                actene[i] -> loc += actene[i] -> speed;
-                map_len[actene[i] -> loc] = actene[i] -> type;
+        for(int i = 0; i < enemy_counter; i++) {
+            if(&actene[i] != NULL) {
+                map_len[actene[i].loc] = actene[i].type;
+                actene[i].loc += actene[i].speed;
             }
         }
 
@@ -59,10 +74,9 @@ int main() {
         }
     }
 
-    for(int i = 0; i < counter; i++) {
-        free(actene[i]);
-        actene[i] = NULL;
-        }
+    
+    free(actene);
+    actene = NULL;
 
     return 0;
 }
