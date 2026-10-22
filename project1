@@ -23,7 +23,7 @@ struct enemy {
 };
 
 void spawn_ene(int turn, int *maxi_ene, int *enemy_counter, struct enemy **actene) {
-        if(turn > 0 && turn < 5) {
+    if(turn > 0 && turn < 5) {
         if(*maxi_ene <= *enemy_counter) {
             *maxi_ene += 2;
             struct enemy *tem = realloc(*actene, sizeof(struct enemy) * *maxi_ene);
@@ -51,10 +51,36 @@ void move_ene(int enemy_counter, int map_len[], struct enemy **actene) {
     }
 }
 
+void map_render (int map_len[], int enemy_counter, struct enemy **actene) {
+    for(int i = 0; i < enemy_counter; i++)      
+        if((*actene)[i].hp == 0) {
+            (*actene)[i].type = 0;
+            (*actene)[i].loc = 0;
+        }
+        for(int i = 0; i < 30; i++) {
+            printf("%d " , map_len[i]);
+        }
+        printf("\n");
+}
+
+void tow_attack (int map_len[], int enemy_counter, struct enemy **actene, struct tower *t1) {
+    map_len[t1 -> tow_stat.tower_loc] = t1 -> MG;
+    for(int i = 0; i < enemy_counter; i++) {
+        if((*actene)[i].loc <= (t1 -> tow_stat.tower_loc) && t1 -> tow_stat.range >= (t1 -> tow_stat.tower_loc - (*actene)[i].loc)) {
+            (*actene)[i].hp -= t1 -> tow_stat.damage;
+        }
+    }
+}
+
 int main() {
     int turn = 0;
     int maxi_ene = 1;
     int enemy_counter = 0;
+    struct tower t1;
+    t1.MG = 11;
+    t1.tow_stat.range = 5;
+    t1.tow_stat.damage = 1;
+    t1.tow_stat.tower_loc = 10;
     struct enemy *actene = (struct enemy*)malloc(sizeof(struct enemy));
 
     if(actene == NULL) {
@@ -70,24 +96,13 @@ int main() {
 
         spawn_ene(turn, &maxi_ene, &enemy_counter, &actene);
 
-        for(int i = 0; i < maxi_ene; i++) {
-            if(actene[i].hp < 1) {
-                actene[i].type = 0;
-                actene[i].loc = 0;
-            }
-        }
-    
-        printf("\nmemory_allocated\n");
-
         for(int i = 0; i < 30; i++) {
             map_len[i] = 0;
         }
 
+        tow_attack(map_len, enemy_counter, &actene, &t1);
         move_ene(enemy_counter, map_len, &actene);
-
-        for(int i = 0; i < 30; i++) {
-            printf("%d " , map_len[i]);
-        }
+        map_render(map_len, enemy_counter, &actene);
 
         turn++;
         if(turn > 50) {
