@@ -1,9 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define MAP_LEN 30
 
-int map_len[30] = {0};
+struct enemy_stat {
+    int hp;
+    int speed;
+    int type;
+    int loc;
+};
+
+struct enemy {
+    int common;
+    int uncommon;
+    int amror;
+    struct enemy_stat ENEMY;
+};
 
 struct tower_stat {
+    int type;
     int range;
     int damage;
     int tower_loc;
@@ -12,107 +26,139 @@ struct tower_stat {
 struct tower {
     int MG;
     int AC;
-    struct tower_stat tow_stat;
+    int RAILG;
+    struct tower_stat TOWER;
 };
 
-struct enemy {
-    int hp;
-    int speed;
-    int type; 
-    int loc;
-};
+void spawn_enemy(int turn, int *enemy_counter, struct enemy **E1) {
 
-void spawn_ene(int turn, int *maxi_ene, int *enemy_counter, struct enemy **actene) {
-    if(turn > 0 && turn < 5) {
-        if(*maxi_ene <= *enemy_counter) {
-            *maxi_ene += 2;
-            struct enemy *tem = realloc(*actene, sizeof(struct enemy) * *maxi_ene);
-            if(tem == NULL) {
-                free(tem);
-                printf("failed_allocate_memory");
+    int slot_index = -1;
+
+    for(int i = 0; i < (*enemy_counter); i++) {
+        if((*E1)[i].ENEMY.type == 0) {
+            slot_index = i;
+            break;
+        }
+    }
+    if(slot_index != -1) {
+        if(turn > 0 && turn < 5) {
+            (*E1)[slot_index].ENEMY.loc = 0;
+            (*E1)[slot_index].ENEMY.type = 1;
+        }
+        else if(turn > 4 && turn < 7) {
+        (*E1)[slot_index].ENEMY.loc = 0;
+        (*E1)[slot_index].ENEMY.type = 2;
+        }
+        else if(turn == 8) {
+            (*E1)[slot_index].ENEMY.loc = 0;
+            (*E1)[slot_index].ENEMY.type = 3;
+        }
+        return;
+    }
+
+    if(slot_index == -1) {
+        (*enemy_counter)++;
+
+        struct enemy *temp = realloc(*E1, sizeof(struct enemy) * *enemy_counter);
+            if(temp == NULL) {
+                printf("allocation failed");
+                free(temp);
                 exit(1);
             }
-            *actene = tem;
+        *E1 = temp;
+        slot_index = *(enemy_counter) - 1;
+
+        if(turn > 0 && turn < 5) {
+            (*E1)[slot_index].ENEMY.loc = 0;
+            (*E1)[slot_index].ENEMY.type = 1;
         }
-        (*actene)[*enemy_counter].hp = 3;
-        (*actene)[*enemy_counter].speed = 1;
-        (*actene)[*enemy_counter].type = 1;
-        (*actene)[*enemy_counter].loc = 0;
-        (*enemy_counter)++;
+        else if(turn > 4 && turn < 7) {
+            (*E1)[slot_index].ENEMY.loc = 0;
+            (*E1)[slot_index].ENEMY.type = 2;
+        }
+        else if(turn == 8) {
+            (*E1)[slot_index].ENEMY.loc = 0;
+            (*E1)[slot_index].ENEMY.type = 3;
+        }
     }
 }
 
-void move_ene(int enemy_counter, int map_len[], struct enemy **actene) {
-    for(int i = 0; i < enemy_counter; i++) {
-        if((*actene)[i].type != 0) {
-            map_len[(*actene)[i].loc] = (*actene)[i].type;
-            (*actene)[i].loc += (*actene)[i].speed;
+void enemy_move(int *enemy_counter, struct enemy **E1) {
+    for(int i = 0; i < *enemy_counter; i++) {
+        if((*E1)[i].ENEMY.type == 0) {
+            continue;
         }
-    }
+        if((*E1)[i].ENEMY.type == 1) {
+            (*E1)[i].ENEMY.speed = 2; 
+        }
+        else if((*E1)[i].ENEMY.type == 2) {
+            (*E1)[i].ENEMY.speed = 3;
+        }
+        else if((*E1)[i].ENEMY.type == 3) {
+            (*E1)[i].ENEMY.speed = 1;
+        }
+
+        for(int j = 0; j < (*E1)[i].ENEMY.speed; j++) {
+            int next_loc = (*E1)[i].ENEMY.loc + 1;
+            int is_bloc = 0;
+
+            for(int k = 0; k < *enemy_counter; k++) {
+                if(i != k && next_loc == (*E1)[k].ENEMY.loc && (*E1)[k].ENEMY.type != 0) {
+                    is_bloc = 1;
+                    break;;
+                }
+            }
+            if(is_bloc == 0) {
+                (*E1)[i].ENEMY.loc = next_loc;
+            }
+            else if(is_bloc == 1) {
+                break;
+            }
+        }
+        if((*E1)[i].ENEMY.loc > MAP_LEN) {
+            (*E1)[i].ENEMY.type = 0;
+            (*E1)[i].ENEMY.loc = 0;
+        }       
+    }  
 }
 
-void map_render (int map_len[], int enemy_counter, struct enemy **actene) {
-    for(int i = 0; i < enemy_counter; i++)      
-        if((*actene)[i].hp == 0) {
-            (*actene)[i].type = 0;
-            (*actene)[i].loc = 0;
+void map_render(int enemy_counter, struct enemy *E1) {
+    for(int i = 0; i < MAP_LEN; i++) {
+        int j;
+        for(j = 0; j < enemy_counter; j++) {
+            if(E1[j].ENEMY.type != 0 && E1[j].ENEMY.loc == i) {
+                printf("%d ", E1[j].ENEMY.type);
+                break;
+            }
         }
-        for(int i = 0; i < 30; i++) {
-            printf("%d " , map_len[i]);
-        }
-        printf("\n");
-}
-
-void tow_attack (int map_len[], int enemy_counter, struct enemy **actene, struct tower *t1) {
-    map_len[t1 -> tow_stat.tower_loc] = t1 -> MG;
-    for(int i = 0; i < enemy_counter; i++) {
-        if((*actene)[i].loc <= (t1 -> tow_stat.tower_loc) && t1 -> tow_stat.range >= (t1 -> tow_stat.tower_loc - (*actene)[i].loc)) {
-            (*actene)[i].hp -= t1 -> tow_stat.damage;
+        if(j == enemy_counter) {
+        printf("0 ");
         }
     }
+    printf("\n");
 }
+
 
 int main() {
+    int enemy_counter = 1;
     int turn = 0;
-    int maxi_ene = 1;
-    int enemy_counter = 0;
-    struct tower t1;
-    t1.MG = 11;
-    t1.tow_stat.range = 5;
-    t1.tow_stat.damage = 1;
-    t1.tow_stat.tower_loc = 10;
-    struct enemy *actene = (struct enemy*)malloc(sizeof(struct enemy));
-
-    if(actene == NULL) {
-        free(actene);
-        printf("failed_allocate_memory");
-        exit(1);
+    int map_len[MAP_LEN];
+    struct enemy *E1 = (struct enemy*)malloc(sizeof(struct enemy) * enemy_counter);
+    if(E1 == NULL) {
+        return 1;
     }
+    E1[0].ENEMY.type = 0;
+    E1[0].ENEMY.loc = 0;
 
-    while(map_len[29] == 0) {
-        if(turn == 0) {
-            printf("...");
-        }
 
-        spawn_ene(turn, &maxi_ene, &enemy_counter, &actene);
-
-        for(int i = 0; i < 30; i++) {
-            map_len[i] = 0;
-        }
-
-        tow_attack(map_len, enemy_counter, &actene, &t1);
-        move_ene(enemy_counter, map_len, &actene);
-        map_render(map_len, enemy_counter, &actene);
-
+    while(1) { 
+        spawn_enemy(turn, &enemy_counter, &E1);
+        map_render(enemy_counter, E1);
+        enemy_move(&enemy_counter, &E1);
         turn++;
-        if(turn > 50) {
-            exit(1);
-        }
+        if(turn > 50) break;
     }
-
-    
-    free(actene);
-    actene = NULL;
+    free(E1);
 
     return 0;
 }
