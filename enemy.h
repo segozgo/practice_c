@@ -1,15 +1,14 @@
-#ifndef ENEMY_S
-#define ENEMY_S
-#define MAP_LEN 30
+#ifndef ENEMY
+#define ENEMY
 
-struct enemy {
+typedef struct _enemy {
     int hp;
     int speed;
     int type;
     int loc;
-};
+} enemy;
 
-void spawn_enemy(int turn, int *enemy_counter, struct enemy **E1);
-void enemy_move(int *enemy_counter, struct enemy **E1);
+void spawn_enemy(int turn, int *enemy_counter, enemy **E);
+void map_render(int enemy_counter, enemy **E);
 
 #endif
