@@ -10,6 +10,7 @@ int main() {
 
     while(turn < 5) {
         spawn_enemy(turn, &enemy_counter, &E);
+        move_enemy(&enemy_counter, &E);
         map_render(enemy_counter, &E);
         turn++;
     }
