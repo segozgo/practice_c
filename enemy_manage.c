@@ -53,3 +53,24 @@ void spawn_enemy(int turn, int *enemy_counter, enemy **E) {
         }
     }
 }
+
+void move_enemy(int *enemy_counter, enemy **E) {
+    for(int i = 0; i < *enemy_counter; i++) {
+        int min_distan;
+        if((*E)[i].type == 1) {
+            (*E)[i].speed = 2;
+        }
+        for(int j = 0; j < *enemy_counter; j++) {
+            if((*E)[i].loc != (*E)[j].loc && (*E)[i].loc < (*E)[j].loc) {
+                min_distan = (*E)[j].loc - (*E)[i].loc;
+            }
+            else if((*E)[i].loc != (*E)[j].loc && (*E)[i].loc > (*E)[j].loc) {
+                (*E)[i].loc += (*E)[i].speed;
+                break;
+            }
+        }
+        if(min_distan <= (*E)[i].speed) {
+            (*E)[i].loc += (min_distan - 1);
+        }
+    }
+}
