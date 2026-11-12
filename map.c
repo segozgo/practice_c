@@ -1,18 +1,19 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "enemy.h"
-#include "map.h"
 
-int main() {
-    int turn = 0;
-    int enemy_counter = 0;
-    enemy *E = (enemy*)malloc(sizeof(enemy) * 1);
+int map[30] = {0};
 
-    while(turn < 5) {
-        spawn_enemy(turn, &enemy_counter, &E);
-        map_render(enemy_counter, &E);
-        turn++;
+void map_render(int enemy_counter, enemy **E) {
+    for(int i = 0; i < 30; i++) {
+        map[i] = 0;
     }
-
-    return 0;
+    for(int i = 0; i < enemy_counter; i++) {
+            if((*E)[i].type != 0) {
+                map[(*E)[i].loc] = (*E)[i].type; 
+            }
+    }
+    for(int i = 0; i < 30; i++) {
+        printf("%d ", map[i]);
+    }
+    printf("\n");
 }
