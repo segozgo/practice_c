@@ -8,9 +8,9 @@ int main() {
     int enemy_counter = 0;
     enemy *E = (enemy*)malloc(sizeof(enemy) * 1);
 
-    while(turn < 5) {
-        spawn_enemy(turn, &enemy_counter, &E);
+    while(turn < 10) {
         move_enemy(&enemy_counter, &E);
+        spawn_enemy(turn, &enemy_counter, &E);
         map_render(enemy_counter, &E);
         turn++;
     }
