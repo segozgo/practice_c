@@ -4,6 +4,10 @@
 
 void spawn_enemy(int turn, int *enemy_counter, enemy **E) {
 
+    if(turn >= 6) {
+        return;
+    }
+
     int slot_index = -1;
 
     for(int i = 0; i < (*enemy_counter); i++) {
@@ -11,21 +15,6 @@ void spawn_enemy(int turn, int *enemy_counter, enemy **E) {
             slot_index = i;
             break;
         }
-    }
-    if(slot_index != -1) {
-        if(turn < 6) {
-            (*E)[slot_index].loc = 0;
-            (*E)[slot_index].type = 1;
-        }
-        else if(turn > 5 && turn < 7) {
-            (*E)[slot_index].loc = 0;
-            (*E)[slot_index].type = 2;
-        }
-        else if(turn == 8) {
-            (*E)[slot_index].loc = 0;
-            (*E)[slot_index].type = 3;
-        }
-        return;
     }
 
     if(slot_index == -1) {
@@ -37,40 +26,33 @@ void spawn_enemy(int turn, int *enemy_counter, enemy **E) {
                 exit(1);
             }
         *E = temp;
-        slot_index = *(enemy_counter) - 1;
+        slot_index = (*enemy_counter) - 1;
 
         if(turn < 6) {
             (*E)[slot_index].loc = 0;
             (*E)[slot_index].type = 1;
-        }
-        else if(turn > 5 && turn < 7) {
-            (*E)[slot_index].loc = 0;
-            (*E)[slot_index].type = 2;
-        }
-        else if(turn == 8) {
-            (*E)[slot_index].loc = 0;
-            (*E)[slot_index].type = 3;
         }
     }
 }
 
 void move_enemy(int *enemy_counter, enemy **E) {
     for(int i = 0; i < *enemy_counter; i++) {
-        int min_distan;
+        int min_dis = 99;
         if((*E)[i].type == 1) {
             (*E)[i].speed = 2;
         }
         for(int j = 0; j < *enemy_counter; j++) {
             if((*E)[i].loc != (*E)[j].loc && (*E)[i].loc < (*E)[j].loc) {
-                min_distan = (*E)[j].loc - (*E)[i].loc;
-            }
-            else if((*E)[i].loc != (*E)[j].loc && (*E)[i].loc > (*E)[j].loc) {
-                (*E)[i].loc += (*E)[i].speed;
-                break;
+                if(min_dis > (*E)[j].loc - (*E)[i].loc) {
+                    min_dis = (*E)[j].loc - (*E)[i].loc;
+                }
             }
         }
-        if(min_distan <= (*E)[i].speed) {
-            (*E)[i].loc += (min_distan - 1);
+        if(min_dis > (*E)[i].speed) {
+            (*E)[i].loc += (*E)[i].speed;
         }
-    }
+        else if(min_dis <= (*E)[i].speed) {
+           (*E)[i].loc = (*E)[i].loc + min_dis - 1;
+        }
+    }   
 }
